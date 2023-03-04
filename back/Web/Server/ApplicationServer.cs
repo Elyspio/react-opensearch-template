@@ -1,4 +1,6 @@
-﻿namespace Example.Api.Web.Server;
+﻿using OpenSearch.Api.Sockets.Hubs;
+
+namespace OpenSearch.Api.Web.Server;
 
 public static class ApplicationServer
 {
@@ -15,7 +17,7 @@ public static class ApplicationServer
 
 		// Setup Controllers
 		application.MapControllers();
-
+		application.MapHub<UpdateHub>("/ws/update");
 		application.UseAuthentication();
 
 		// Start SPA serving

@@ -1,4 +1,4 @@
-﻿namespace Example.Api.Adapters.Configs;
+﻿namespace OpenSearch.Api.Adapters.Configs;
 
 public class EndpointConfig
 {

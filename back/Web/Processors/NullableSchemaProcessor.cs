@@ -1,7 +1,7 @@
 ﻿using NJsonSchema;
 using NJsonSchema.Generation;
 
-namespace Example.Api.Web.Processors;
+namespace OpenSearch.Api.Web.Processors;
 
 /// <inheritdoc />
 public class NullableSchemaProcessor : ISchemaProcessor

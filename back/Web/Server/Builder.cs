@@ -1,21 +1,21 @@
-﻿using Example.Api.Abstractions.Helpers;
-using Example.Api.Abstractions.Interfaces.Injections;
-using Example.Api.Adapters.Injections;
-using Example.Api.Core.Injections;
-using Example.Api.Db.Injections;
-using Example.Api.Web.Filters;
-using Example.Api.Web.Processors;
-using Example.Api.Web.Utils;
+﻿using OpenSearch.Api.Abstractions.Helpers;
+using OpenSearch.Api.Abstractions.Interfaces.Injections;
+using OpenSearch.Api.Adapters.Injections;
+using OpenSearch.Api.Core.Injections;
+using OpenSearch.Api.Db.Injections;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json.Converters;
+using OpenSearch.Api.Web.Filters;
+using OpenSearch.Api.Web.Processors;
+using OpenSearch.Api.Web.Utils;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Net;
 using System.Text.Json.Serialization;
 
-namespace Example.Api.Web.Server;
+namespace OpenSearch.Api.Web.Server;
 
 public class ServerBuilder
 {
@@ -86,6 +86,15 @@ public class ServerBuilder
 			document.SchemaProcessors.Add(new NullableSchemaProcessor());
 			document.OperationProcessors.Add(new NullableOperationProcessor());
 		});
+		
+		builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
+			.AddJsonProtocol(options =>
+				{
+					options.PayloadSerializerOptions.IncludeFields = true;
+					options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				}
+			);
+		
 		// Setup SPA Serving
 		if (builder.Environment.IsProduction()) Console.WriteLine($"Server in production, serving SPA from {frontPath} folder");
 

@@ -1,3 +1,3 @@
-using Example.Api.Web.Server;
+using OpenSearch.Api.Web.Server;
 
 new ServerBuilder(args).Application.Initialize().Run();

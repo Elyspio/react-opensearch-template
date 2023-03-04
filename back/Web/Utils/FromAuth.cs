@@ -1,6 +1,6 @@
-﻿using Example.Api.Adapters.AuthenticationApi;
+﻿using OpenSearch.Api.Adapters.AuthenticationApi;
 
-namespace Example.Api.Web.Utils;
+namespace OpenSearch.Api.Web.Utils;
 
 public class AuthUtility
 {

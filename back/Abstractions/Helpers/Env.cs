@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Example.Api.Abstractions.Helpers;
+namespace OpenSearch.Api.Abstractions.Helpers;
 
 public class Env
 {

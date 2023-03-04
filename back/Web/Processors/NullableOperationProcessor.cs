@@ -2,7 +2,7 @@
 using NSwag.Generation.Processors.Contexts;
 using System.Reflection;
 
-namespace Example.Api.Web.Processors;
+namespace OpenSearch.Api.Web.Processors;
 
 public class NullableOperationProcessor : IOperationProcessor
 {

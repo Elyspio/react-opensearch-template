@@ -1,10 +1,10 @@
-﻿using Example.Api.Abstractions.Interfaces.Injections;
-using Example.Api.Adapters.AuthenticationApi;
-using Example.Api.Adapters.Configs;
+﻿using OpenSearch.Api.Abstractions.Interfaces.Injections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenSearch.Api.Adapters.AuthenticationApi;
+using OpenSearch.Api.Adapters.Configs;
 
-namespace Example.Api.Adapters.Injections;
+namespace OpenSearch.Api.Adapters.Injections;
 
 public class AdapterModule : IDotnetModule
 {

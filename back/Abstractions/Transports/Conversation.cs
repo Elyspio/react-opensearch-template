@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Example.Api.Abstractions.Transports;
+namespace OpenSearch.Api.Abstractions.Transports;
 
-public class Todo : TodoBase
+public class Conversation : ConversationBase
 {
 	[Required] public required Guid Id { get; init; }
 }

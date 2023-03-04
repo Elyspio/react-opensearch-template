@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace Example.Api.Web.Utils;
+namespace OpenSearch.Api.Web.Utils;
 
 public class ControllerDocumentationConvention : IControllerModelConvention
 {

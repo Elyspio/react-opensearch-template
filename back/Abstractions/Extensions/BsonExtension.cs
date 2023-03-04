@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace Example.Api.Abstractions.Extensions;
+namespace OpenSearch.Api.Abstractions.Extensions;
 
 public static class BsonExtension
 {

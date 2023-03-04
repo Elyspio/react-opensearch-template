@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Example.Api.Abstractions.Exceptions;
+namespace OpenSearch.Api.Abstractions.Exceptions;
 
 public class HttpException : Exception
 {

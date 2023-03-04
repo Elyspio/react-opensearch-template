@@ -1,8 +1,8 @@
-﻿using Example.Api.Abstractions.Interfaces.Injections;
+﻿using OpenSearch.Api.Abstractions.Interfaces.Injections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Example.Api.Core.Injections;
+namespace OpenSearch.Api.Core.Injections;
 
 public class CoreModule : IDotnetModule
 {

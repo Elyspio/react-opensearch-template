@@ -1,11 +1,11 @@
-﻿using Example.Api.Db.Configs;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
+using OpenSearch.Api.Db.Configs;
 
-namespace Example.Api.Db.Repositories.Internal;
+namespace OpenSearch.Api.Db.Repositories.Internal;
 
 public class MongoContext
 {

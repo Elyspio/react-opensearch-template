@@ -1,4 +1,4 @@
-﻿namespace Example.Api.Db.Configs;
+﻿namespace OpenSearch.Api.Db.Configs;
 
 public class DbConfig
 {

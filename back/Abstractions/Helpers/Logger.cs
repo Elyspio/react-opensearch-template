@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Example.Api.Abstractions.Helpers;
+namespace OpenSearch.Api.Abstractions.Helpers;
 
 public static class Log
 {
@@ -21,6 +21,16 @@ public static class Log
 		return $"{name}={JsonSerializer.Serialize(value, options)}";
 	}
 
+	/// <summary>
+	/// Alias of Format
+	/// </summary>
+	/// <param name="value"></param>
+	/// <param name="name"></param>
+	/// <returns></returns>
+	public static string F(object? value, [CallerArgumentExpression("value")] string name = "")
+	{
+		return Format(value, name);
+	}
 
 	public static LoggerInstance<T> Enter<T>(this ILogger<T> logger, string arguments = "", LogLevel level = LogLevel.Debug, [CallerMemberName] string method = "")
 	{

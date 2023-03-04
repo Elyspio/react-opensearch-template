@@ -1,8 +1,8 @@
-﻿using Example.Api.Abstractions.Exceptions;
+﻿using OpenSearch.Api.Abstractions.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Example.Api.Web.Filters;
+namespace OpenSearch.Api.Web.Filters;
 
 public class HttpExceptionFilter : ExceptionFilterAttribute
 {

@@ -1,9 +1,19 @@
-﻿using Example.Api.Abstractions.Interfaces.Assemblers;
+﻿using Mapster;
+using MongoDB.Bson;
+using OpenSearch.Api.Abstractions.Extensions;
+using OpenSearch.Api.Abstractions.Interfaces.Assemblers;
 
-namespace Example.Api.Abstractions.Assemblers;
+namespace OpenSearch.Api.Abstractions.Assemblers;
 
 public abstract class BaseAssembler<TA, TB> : IAssembler<TA, TB>
 {
+
+	static BaseAssembler()
+	{
+		TypeAdapterConfig.GlobalSettings.ForType<Guid, ObjectId>().MapWith(id => id.AsObjectId());
+		TypeAdapterConfig.GlobalSettings.ForType<ObjectId, Guid>().MapWith(id => id.AsGuid());
+	}
+
 	public abstract TB Convert(TA obj);
 
 	public abstract TA Convert(TB obj);
