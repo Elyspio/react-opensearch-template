@@ -1,0 +1,54 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS builder-back
+
+ARG MAIN_CSPROJ_PATH
+ARG ROOT_FOLDER
+
+ENV SRC /app
+
+RUN mkdir ${SRC}
+WORKDIR ${SRC}
+
+
+# Copy only .csproj located in root directory to add cache to dotnet restore
+COPY ${ROOT_FOLDER}*/*.csproj ./${ROOT_FOLDER}
+WORKDIR ${ROOT_FOLDER}
+RUN find *.csproj | sed -r -e 's/.*\.(.+).csproj/\1/g' | xargs mkdir -p
+RUN find *.csproj | sed -r -e 's/(.*\.(.+).csproj)/.\/\1 .\/\2/g' | xargs -I % sh -c 'mv %'
+
+
+# endregion optimize dotnet restore
+
+COPY ${ROOT_FOLDER} ${SRC}/${ROOT_FOLDER}
+
+
+
+WORKDIR ${SRC}/${ROOT_FOLDER}
+RUN dotnet restore ${MAIN_CSPROJ_PATH}
+RUN dotnet publish ${MAIN_CSPROJ_PATH} --no-restore -o /app/out
+
+
+# Building front
+FROM --platform=linux/amd64 node:16 as builder-front
+
+COPY front/package.json /front/
+COPY front/yarn.lock /front/
+RUN cd /front && yarn
+
+COPY front /front/
+RUN cd /front && yarn build
+
+
+# Running
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS production
+
+ARG ENTRY_DLL
+ENV ENTRY_DLL ${ENTRY_DLL}
+
+WORKDIR /back
+COPY --from=builder-back /app/out .
+
+COPY --from=builder-front /front/build /back/wwwroot
+ENV FRONT_PATH /back/wwwroot
+
+EXPOSE 4000
+CMD dotnet ${ENTRY_DLL}
