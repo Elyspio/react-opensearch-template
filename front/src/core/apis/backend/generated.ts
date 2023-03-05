@@ -11,7 +11,16 @@
 import axios, { AxiosError } from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
-export class TodoClient {
+export interface IConversationClient {
+    search(content?: string | null | undefined): Promise<Conversation[]>;
+    create(request: CreateConversationRequest): Promise<Conversation>;
+    getById(id: string): Promise<Conversation>;
+    delete(id: string): Promise<void>;
+    addMessage(id: string, request: AddMessageRequest): Promise<void>;
+    rename(id: string, title: string): Promise<void>;
+}
+
+export class ConversationClient implements IConversationClient {
     private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -24,8 +33,10 @@ export class TodoClient {
 
     }
 
-    getAll(  cancelToken?: CancelToken | undefined): Promise<Todo[]> {
-        let url_ = this.baseUrl + "/api/todo";
+    search(content?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<Conversation[]> {
+        let url_ = this.baseUrl + "/api/conversations?";
+        if (content !== undefined && content !== null)
+            url_ += "content=" + encodeURIComponent("" + content) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -44,11 +55,11 @@ export class TodoClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processGetAll(_response);
+            return this.processSearch(_response);
         });
     }
 
-    protected processGetAll(response: AxiosResponse): Promise<Todo[]> {
+    protected processSearch(response: AxiosResponse): Promise<Conversation[]> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -63,20 +74,20 @@ export class TodoClient {
             let result200: any = null;
             let resultData200  = _responseText;
             result200 = JSON.parse(resultData200);
-            return Promise.resolve<Todo[]>(result200);
+            return Promise.resolve<Conversation[]>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<Todo[]>(null as any);
+        return Promise.resolve<Conversation[]>(null as any);
     }
 
-    add(label: string , cancelToken?: CancelToken | undefined): Promise<Todo> {
-        let url_ = this.baseUrl + "/api/todo";
+    create(request: CreateConversationRequest , cancelToken?: CancelToken | undefined): Promise<Conversation> {
+        let url_ = this.baseUrl + "/api/conversations";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(label);
+        const content_ = JSON.stringify(request);
 
         let options_: AxiosRequestConfig = {
             data: content_,
@@ -96,11 +107,11 @@ export class TodoClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processAdd(_response);
+            return this.processCreate(_response);
         });
     }
 
-    protected processAdd(response: AxiosResponse): Promise<Todo> {
+    protected processCreate(response: AxiosResponse): Promise<Conversation> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -110,29 +121,29 @@ export class TodoClient {
                 }
             }
         }
-        if (status === 200) {
+        if (status === 201) {
             const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return Promise.resolve<Todo>(result200);
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = JSON.parse(resultData201);
+            return Promise.resolve<Conversation>(result201);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<Todo>(null as any);
+        return Promise.resolve<Conversation>(null as any);
     }
 
-    check(id: string , cancelToken?: CancelToken | undefined): Promise<Todo> {
-        let url_ = this.baseUrl + "/api/todo/{id}/toggle";
+    getById(id: string , cancelToken?: CancelToken | undefined): Promise<Conversation> {
+        let url_ = this.baseUrl + "/api/conversations/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
-            method: "PUT",
+            method: "GET",
             url: url_,
             headers: {
                 "Accept": "application/json"
@@ -147,11 +158,11 @@ export class TodoClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processCheck(_response);
+            return this.processGetById(_response);
         });
     }
 
-    protected processCheck(response: AxiosResponse): Promise<Todo> {
+    protected processGetById(response: AxiosResponse): Promise<Conversation> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -166,17 +177,17 @@ export class TodoClient {
             let result200: any = null;
             let resultData200  = _responseText;
             result200 = JSON.parse(resultData200);
-            return Promise.resolve<Todo>(result200);
+            return Promise.resolve<Conversation>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<Todo>(null as any);
+        return Promise.resolve<Conversation>(null as any);
     }
 
     delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/todo/{id}";
+        let url_ = this.baseUrl + "/api/conversations/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -221,32 +232,22 @@ export class TodoClient {
         }
         return Promise.resolve<void>(null as any);
     }
-}
 
-export class TodoUserClient {
-    private instance: AxiosInstance;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, instance?: AxiosInstance) {
-
-        this.instance = instance ? instance : axios.create();
-
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "http://localhost:4000";
-
-    }
-
-    deleteForUser(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/todo/user/{id}";
+    addMessage(id: string, request: AddMessageRequest , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/conversations/{id}/message";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(request);
+
         let options_: AxiosRequestConfig = {
-            method: "DELETE",
+            data: content_,
+            method: "POST",
             url: url_,
             headers: {
+                "Content-Type": "application/json",
             },
             cancelToken
         };
@@ -258,11 +259,11 @@ export class TodoUserClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processDeleteForUser(_response);
+            return this.processAddMessage(_response);
         });
     }
 
-    protected processDeleteForUser(response: AxiosResponse): Promise<void> {
+    protected processAddMessage(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -283,118 +284,21 @@ export class TodoUserClient {
         return Promise.resolve<void>(null as any);
     }
 
-    addForUser(label: string , cancelToken?: CancelToken | undefined): Promise<Todo> {
-        let url_ = this.baseUrl + "/api/todo/user";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(label);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processAddForUser(_response);
-        });
-    }
-
-    protected processAddForUser(response: AxiosResponse): Promise<Todo> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 201) {
-            const _responseText = response.data;
-            let result201: any = null;
-            let resultData201  = _responseText;
-            result201 = JSON.parse(resultData201);
-            return Promise.resolve<Todo>(result201);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<Todo>(null as any);
-    }
-
-    getAllForUser(  cancelToken?: CancelToken | undefined): Promise<Todo[]> {
-        let url_ = this.baseUrl + "/api/todo/user";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetAllForUser(_response);
-        });
-    }
-
-    protected processGetAllForUser(response: AxiosResponse): Promise<Todo[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return Promise.resolve<Todo[]>(result200);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<Todo[]>(null as any);
-    }
-
-    checkForUser(id: string , cancelToken?: CancelToken | undefined): Promise<Todo> {
-        let url_ = this.baseUrl + "/api/todo/user/{id}/toggle";
+    rename(id: string, title: string , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/conversations/{id}/title";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(title);
+
         let options_: AxiosRequestConfig = {
+            data: content_,
             method: "PUT",
             url: url_,
             headers: {
-                "Accept": "application/json"
+                "Content-Type": "application/json",
             },
             cancelToken
         };
@@ -406,11 +310,11 @@ export class TodoUserClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processCheckForUser(_response);
+            return this.processRename(_response);
         });
     }
 
-    protected processCheckForUser(response: AxiosResponse): Promise<Todo> {
+    protected processRename(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -420,29 +324,45 @@ export class TodoUserClient {
                 }
             }
         }
-        if (status === 200) {
+        if (status === 204) {
             const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return Promise.resolve<Todo>(result200);
+            return Promise.resolve<void>(null as any);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<Todo>(null as any);
+        return Promise.resolve<void>(null as any);
     }
 }
 
-export interface TodoBase {
-    label: string;
-    user: string;
-    checked: boolean;
+export interface ConversationBase {
+    title: string;
+    members: User[];
+    messages: Message[];
 }
 
-export interface Todo extends TodoBase {
+export interface Conversation extends ConversationBase {
     id: string;
+}
+
+export interface User {
+    name: string;
+}
+
+export interface Message {
+    content: string;
+    author: User;
+}
+
+export interface AddMessageRequest {
+    content: string;
+    author: string;
+}
+
+export interface CreateConversationRequest {
+    title: string;
+    members: string[];
 }
 
 export class ApiException extends Error {

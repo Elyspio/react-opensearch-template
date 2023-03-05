@@ -12,10 +12,6 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { Provider as DiProvider } from "inversify-react";
 import { container } from "./core/di";
 
-declare module "@mui/styles/defaultTheme" {
-	interface DefaultTheme extends Theme {}
-}
-
 function Wrapper() {
 	const { theme, current } = useAppSelector((state) => ({ theme: state.theme.current === "dark" ? themes.dark : themes.light, current: state.theme.current }));
 

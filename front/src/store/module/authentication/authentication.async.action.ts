@@ -15,7 +15,7 @@ const createAsyncThunk = createAsyncActionGenerator("authentication");
 const localStorages = container.get<LocalStorageService>(DiKeysService.localStorage.jwt);
 
 function waitForLogin(page: Window) {
-	return new Promise<void>(async (resolve) => {
+	return new Promise<void>( (resolve) => {
 		let interval: NodeJS.Timer | undefined;
 
 		const clearInter = () => interval !== undefined && clearInterval(interval);
@@ -23,10 +23,10 @@ function waitForLogin(page: Window) {
 
 		const func = () => {
 			console.debug("Checking if user is logged from local storage");
-			let isPresent = localStorages.get() !== undefined;
+			const isPresent = localStorages.get() !== undefined;
 			if (isPresent) {
 				clearInter();
-				resolve();
+				resolve( );
 				return true;
 			}
 

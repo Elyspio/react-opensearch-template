@@ -18,7 +18,7 @@ function Actions(props: { elements: WithDrawerProps["actions"] }) {
 		<Box className={"Actions"}>
 			{props.elements.map((action) => (
 				<ActionComponent key={action.description.children?.toString()} {...action.component}>
-					<ActionDescription children={action.description.children} />
+					<ActionDescription>{action.description.children}</ActionDescription>
 				</ActionComponent>
 			))}
 		</Box>

@@ -4,7 +4,7 @@ type Event = {
 	[key in string]: (...args: any) => void;
 };
 
-export class EventManager<T extends Event = {}> {
+export class EventManager<T extends Event = Record<string, any>> {
 	private base = new EventEmitter();
 
 	public on<event extends keyof T>(evt: event, callback: T[event]) {

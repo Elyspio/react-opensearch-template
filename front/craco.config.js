@@ -1,6 +1,8 @@
 // craco.config.js
 const CracoSwcPlugin = require("craco-swc");
 
+process.env.BROWSER = "none"
+
 module.exports = {
 	plugins: [
 		{

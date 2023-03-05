@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { TodoClient, TodoUserClient } from "./generated";
+import { ConversationClient } from "./generated";
 import { TokenService } from "../../services/common/auth/token.service";
 import axios from "axios";
 
@@ -12,7 +12,7 @@ const fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response> = (url,
 
 @injectable()
 export class BackendApi {
-	public todo: { common: TodoClient; user: TodoUserClient };
+	public conversations: ConversationClient;
 
 	constructor(@inject(TokenService) tokenService: TokenService) {
 		const instance = axios.create({ withCredentials: true, transformResponse: [] });
@@ -22,9 +22,6 @@ export class BackendApi {
 			return value;
 		});
 
-		this.todo = {
-			common: new TodoClient(window.config.endpoints.core, instance),
-			user: new TodoUserClient(window.config.endpoints.core, instance),
-		};
+		this.conversations = new ConversationClient(window.config.endpoints.core, instance);
 	}
 }

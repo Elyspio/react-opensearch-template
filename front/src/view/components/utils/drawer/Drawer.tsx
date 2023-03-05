@@ -15,7 +15,7 @@ import { makeStyles } from "@mui/styles";
 export interface Action {
 	text: React.ReactNode;
 	icon: React.ReactNode;
-	onClick?: Function;
+	onClick?: (e: React.MouseEvent) => void;
 }
 
 type Props = {
@@ -26,7 +26,7 @@ type Props = {
 };
 
 const drawerWidth = 210;
-let baseWidth = 46;
+const baseWidth = 46;
 
 const useStyles = makeStyles((theme: Theme) => ({
 	drawer: {
@@ -73,7 +73,7 @@ const getActions = (actions: Action[]) => {
 	const actionComponents = (comp.length > 0 ? comp : [actions]).map((actions, i) => (
 		<List className={"toolbar"} key={i}>
 			{actions.map((action, i) => (
-				<ListItem button key={i} onClick={() => action.onClick && action.onClick()}>
+				<ListItem button key={i} onClick={(e) => action.onClick && action.onClick(e)}>
 					<ListItemIcon>{action.icon}</ListItemIcon>
 					{action.text}
 				</ListItem>
