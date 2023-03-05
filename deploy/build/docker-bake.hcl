@@ -3,15 +3,13 @@ target "default" {
 	dockerfile = "./deploy/build/dockerfile"
 	platforms  = [
 		"linux/amd64",
-#		"linux/arm64"
 	]
 	tags = [
-		"elyspio/react-api-template:latest"
+		"elyspio/react-opensearch-template:latest"
 	]
 	args = {
-		SLN_PATH         = "back/ExampleApi.sln"
-		MAIN_CSPROJ_PATH = "Web/Example.Api.Web.csproj"
+		MAIN_CSPROJ_PATH = "Web/OpenSearch.Api.Web.csproj"
 		ROOT_FOLDER      = "back/"
-		ENTRY_DLL        = "Example.Api.Web.dll"
+		ENTRY_DLL        = "OpenSearch.Api.Web.dll"
 	}
 }

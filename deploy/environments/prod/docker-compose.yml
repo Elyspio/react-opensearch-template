@@ -1,8 +1,8 @@
 version: "3"
 services:
-    react-api-template:
-        container_name: "react-api-template"
-        image: elyspio/react-api-template
+    react-opensearch-template:
+        container_name: "react-opensearch-template"
+        image: elyspio/react-opensearch-template
         volumes:
             - "./config/front/conf.js:/back/wwwroot/conf.js"
             - "./config/back/appsettings.json:/back/appsettings.json"
@@ -12,11 +12,11 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=external"
-            - "traefik.http.middlewares.react-api-template-prefix.stripprefix.prefixes=/react-api-template"
-            - "traefik.http.routers.react-api-template.middlewares=react-api-template-prefix@docker"
-            - "traefik.http.routers.react-api-template.rule=PathPrefix(`/react-api-template`)"
-            - "traefik.http.services.react-api-template.loadbalancer.server.port=4000"
-            - "traefik.http.routers.react-api-template.entrypoints=external"
+            - "traefik.http.middlewares.react-opensearch-template-prefix.stripprefix.prefixes=/react-opensearch-template"
+            - "traefik.http.routers.react-opensearch-template.middlewares=react-opensearch-template-prefix@docker"
+            - "traefik.http.routers.react-opensearch-template.rule=PathPrefix(`/react-opensearch-template`)"
+            - "traefik.http.services.react-opensearch-template.loadbalancer.server.port=4000"
+            - "traefik.http.routers.react-opensearch-template.entrypoints=external"
 
 
 

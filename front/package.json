@@ -2,7 +2,7 @@
 	"name": "front",
 	"version": "0.1.0",
 	"private": true,
-	"homepage": "/react-api-template",
+	"homepage": "/react-opensearch-template",
 	"scripts": {
 		"start": "craco start",
 		"build": "craco build",
