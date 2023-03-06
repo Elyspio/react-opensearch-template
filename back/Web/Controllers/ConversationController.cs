@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
-using OpenSearch.Api.Abstractions.Interfaces.Services;
-using OpenSearch.Api.Abstractions.Transports;
-using OpenSearch.Api.Adapters.AuthenticationApi;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
+using OpenSearch.Api.Abstractions.Interfaces.Services;
+using OpenSearch.Api.Abstractions.Transports;
 using OpenSearch.Api.Abstractions.Transports.Requests;
-using OpenSearch.Api.Web.Filters;
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace OpenSearch.Api.Web.Controllers;
@@ -19,7 +16,7 @@ public class ConversationController : ControllerBase
 
 	public ConversationController(IConversationService conversationService)
 	{
-		this._conversationService = conversationService;
+		_conversationService = conversationService;
 	}
 
 	[HttpGet("")]
@@ -50,7 +47,7 @@ public class ConversationController : ControllerBase
 	public async Task<IActionResult> Create(CreateConversationRequest request)
 	{
 		var conv = await _conversationService.Create(request.Title, request.Members);
-		return Created(Request.GetDisplayUrl() + "/" + conv.Id.ToString(), conv);
+		return Created(Request.GetDisplayUrl() + "/" + conv.Id, conv);
 	}
 
 	[HttpPut("{id:guid}/title")]

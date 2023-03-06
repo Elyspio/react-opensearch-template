@@ -1,11 +1,11 @@
-﻿using OpenSearch.Api.Abstractions.Extensions;
-using OpenSearch.Api.Abstractions.Interfaces.Repositories;
-using OpenSearch.Api.Abstractions.Models;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using OpenSearch.Api.Abstractions.Extensions;
 using OpenSearch.Api.Abstractions.Helpers;
+using OpenSearch.Api.Abstractions.Interfaces.Repositories;
+using OpenSearch.Api.Abstractions.Models;
 using OpenSearch.Api.Abstractions.Transports;
 using OpenSearch.Api.Db.Repositories.Internal;
 
@@ -26,11 +26,11 @@ internal class ConversationRepository : BaseRepository<ConversationEntity>, ICon
 
 		var conv = new ConversationEntity
 		{
-			Members = members.Select(member => new User()
+			Members = members.Select(member => new User
 			{
 				Name = member
 			}).ToList(),
-			Messages = new List<Message>(),
+			Messages = new(),
 			Title = title
 		};
 
@@ -41,11 +41,11 @@ internal class ConversationRepository : BaseRepository<ConversationEntity>, ICon
 		return conv;
 	}
 
-	public async Task AddMessage(Guid id, string content, string author)
+	public async Task<Message> AddMessage(Guid id, string content, string author)
 	{
 		var logger = _logger.Enter($"{Log.F(id)} {Log.F(content)} {Log.F(author)}");
 
-		var update = Builders<ConversationEntity>.Update.Push(conv => conv.Messages, new()
+		var message = new Message
 		{
 			Author = new()
 			{
@@ -53,11 +53,14 @@ internal class ConversationRepository : BaseRepository<ConversationEntity>, ICon
 			},
 			Content = content,
 			Created = DateTime.Now
-		});
+		};
+		var update = Builders<ConversationEntity>.Update.Push(conv => conv.Messages, message);
 
 		await EntityCollection.UpdateOneAsync(conv => conv.Id == id.AsObjectId(), update);
 
 		logger.Exit();
+
+		return message;
 	}
 
 	public async Task<List<ConversationEntity>> GetByIds(List<Guid> ids)
@@ -87,7 +90,7 @@ internal class ConversationRepository : BaseRepository<ConversationEntity>, ICon
 	{
 		var logger = _logger.Enter(Log.F(id));
 
-		await EntityCollection.DeleteOneAsync((conv) => conv.Id == id.AsObjectId());
+		await EntityCollection.DeleteOneAsync(conv => conv.Id == id.AsObjectId());
 
 		logger.Exit();
 	}
@@ -98,7 +101,7 @@ internal class ConversationRepository : BaseRepository<ConversationEntity>, ICon
 
 		var update = Builders<ConversationEntity>.Update.Set(conv => conv.Title, title);
 
-		await EntityCollection.UpdateOneAsync((conv) => conv.Id == id.AsObjectId(), update);
+		await EntityCollection.UpdateOneAsync(conv => conv.Id == id.AsObjectId(), update);
 
 		logger.Exit();
 	}

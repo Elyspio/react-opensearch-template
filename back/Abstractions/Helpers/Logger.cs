@@ -22,7 +22,7 @@ public static class Log
 	}
 
 	/// <summary>
-	/// Alias of Format
+	///     Alias of Format
 	/// </summary>
 	/// <param name="value"></param>
 	/// <param name="name"></param>

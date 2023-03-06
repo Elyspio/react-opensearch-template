@@ -1,11 +1,12 @@
-﻿using OpenSearch.Api.Abstractions.Helpers;
+﻿using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Newtonsoft.Json.Converters;
+using OpenSearch.Api.Abstractions.Helpers;
 using OpenSearch.Api.Abstractions.Interfaces.Injections;
 using OpenSearch.Api.Adapters.Injections;
 using OpenSearch.Api.Core.Injections;
 using OpenSearch.Api.Db.Injections;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Newtonsoft.Json.Converters;
+using OpenSearch.Api.Search.Injections;
 using OpenSearch.Api.Web.Filters;
 using OpenSearch.Api.Web.Processors;
 using OpenSearch.Api.Web.Utils;
@@ -51,7 +52,7 @@ public class ServerBuilder
 			}
 		);
 
-
+		builder.Services.AddModule<SearchModule>(builder.Configuration);
 		builder.Services.AddModule<AdapterModule>(builder.Configuration);
 		builder.Services.AddModule<CoreModule>(builder.Configuration);
 		builder.Services.AddModule<DatabaseModule>(builder.Configuration);
@@ -86,7 +87,7 @@ public class ServerBuilder
 			document.SchemaProcessors.Add(new NullableSchemaProcessor());
 			document.OperationProcessors.Add(new NullableOperationProcessor());
 		});
-		
+
 		builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
 			.AddJsonProtocol(options =>
 				{
@@ -94,7 +95,7 @@ public class ServerBuilder
 					options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 				}
 			);
-		
+
 		// Setup SPA Serving
 		if (builder.Environment.IsProduction()) Console.WriteLine($"Server in production, serving SPA from {frontPath} folder");
 

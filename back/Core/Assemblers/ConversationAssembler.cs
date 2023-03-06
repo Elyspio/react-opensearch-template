@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using OpenSearch.Api.Abstractions.Assemblers;
-using OpenSearch.Api.Abstractions.Extensions;
 using OpenSearch.Api.Abstractions.Models;
 using OpenSearch.Api.Abstractions.Transports;
 

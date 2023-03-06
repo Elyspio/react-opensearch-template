@@ -1,6 +1,6 @@
-﻿using OpenSearch.Api.Abstractions.Interfaces.Injections;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenSearch.Api.Abstractions.Interfaces.Injections;
 
 namespace OpenSearch.Api.Core.Injections;
 

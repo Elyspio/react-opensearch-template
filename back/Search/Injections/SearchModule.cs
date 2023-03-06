@@ -2,17 +2,17 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenSearch.Api.Abstractions.Interfaces.Injections;
 
-namespace OpenSearch.Api.Db.Injections;
+namespace OpenSearch.Api.Search.Injections;
 
-public class DatabaseModule : IDotnetModule
+public class SearchModule : IDotnetModule
 {
 	public void Load(IServiceCollection services, IConfiguration configuration)
 	{
-		var nsp = typeof(DatabaseModule).Namespace!;
+		var nsp = typeof(SearchModule).Namespace!;
 		var baseNamespace = nsp[..nsp.LastIndexOf(".")];
 		services.Scan(scan => scan
-			.FromAssemblyOf<DatabaseModule>()
-			.AddClasses(classes => classes.InNamespaces(baseNamespace + ".Repositories"))
+			.FromAssemblyOf<SearchModule>()
+			.AddClasses(classes => classes.InNamespaces(baseNamespace + ".Searches"))
 			.AsImplementedInterfaces()
 			.WithSingletonLifetime()
 		);

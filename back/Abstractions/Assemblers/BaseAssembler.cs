@@ -7,7 +7,6 @@ namespace OpenSearch.Api.Abstractions.Assemblers;
 
 public abstract class BaseAssembler<TA, TB> : IAssembler<TA, TB>
 {
-
 	static BaseAssembler()
 	{
 		TypeAdapterConfig.GlobalSettings.ForType<Guid, ObjectId>().MapWith(id => id.AsObjectId());

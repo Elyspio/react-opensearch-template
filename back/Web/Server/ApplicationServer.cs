@@ -27,7 +27,10 @@ public static class ApplicationServer
 
 			application.UseDefaultFiles(new DefaultFilesOptions
 				{
-					DefaultFileNames = new List<string> {"index.html"},
+					DefaultFileNames = new List<string>
+					{
+						"index.html"
+					},
 					RedirectToAppendTrailingSlash = true
 				}
 			);

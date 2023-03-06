@@ -1,6 +1,6 @@
-﻿using OpenSearch.Api.Abstractions.Exceptions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using OpenSearch.Api.Abstractions.Exceptions;
 
 namespace OpenSearch.Api.Web.Filters;
 
