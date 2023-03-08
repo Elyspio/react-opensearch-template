@@ -1,16 +1,21 @@
-import React, { useMemo } from "react";
-import { Button, Stack } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { Button, Stack, TextField } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { User } from "../../../../core/apis/backend/generated";
 import { bindActionCreators } from "redux";
-import { deleteConversation } from "../../../../store/module/conversations/conversations.async.actions";
+import {
+	deleteConversation,
+	getConversations,
+} from "../../../../store/module/conversations/conversations.async.actions";
 import { setSelected } from "../../../../store/module/conversations/conversations.actions";
 
 export function ConversationList() {
 
 	const { all: conversations } = useAppSelector(s => s.conversations);
 
+
+	const [search, setSearch] = useState("");
 
 	const dispatch = useAppDispatch();
 
@@ -38,8 +43,15 @@ export function ConversationList() {
 	];
 
 
+
 	return (
-		<Stack height={"100%"} width={"100%"}>
+		<Stack height={"100%"} width={"100%"} spacing={2}>
+			<Stack direction={"row"} spacing={2} p={2}>
+				<TextField fullWidth variant={"standard"} label={"Search"} onChange={(e) => {
+					setSearch(e.target.value);
+					dispatch(getConversations(e.target.value))
+				}} value={search}></TextField>
+			</Stack>
 			<DataGrid rows={rows} columns={columns} onRowClick={params => actions.setSelected(params.row.id)} />
 		</Stack>
 	);

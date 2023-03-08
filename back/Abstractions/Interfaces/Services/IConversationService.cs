@@ -10,4 +10,6 @@ public interface IConversationService
 	Task Delete(Guid id);
 	Task Rename(Guid id, string title);
 	Task<Conversation> GetById(Guid id);
+
+	Task ReIndex();
 }

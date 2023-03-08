@@ -28,6 +28,9 @@ const slice = createSlice({
 		});
 
 		builder.addCase(getConversations.fulfilled, (state, action) => {
+
+			state.all = {};
+
 			action.payload.forEach(conv => {
 				state.all[conv.id] = conv;
 			});

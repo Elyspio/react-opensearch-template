@@ -117,4 +117,17 @@ public class ConversationService : IConversationService
 
 		return conv;
 	}
+
+	public async Task ReIndex()
+	{
+		var logger = _logger.Enter();
+
+		var conversations = await Search("");
+
+		logger.Info($"{Log.F(conversations.Count)}");
+
+		await _conversationSearch.ReIndex(conversations);
+
+		logger.Exit();
+	}
 }

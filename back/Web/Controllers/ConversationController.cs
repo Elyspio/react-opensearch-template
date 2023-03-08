@@ -26,6 +26,15 @@ public class ConversationController : ControllerBase
 		return Ok(await _conversationService.Search(content));
 	}
 
+	[HttpPatch("")]
+	[SwaggerResponse(HttpStatusCode.NoContent, typeof(void))]
+	public async Task<IActionResult> ReIndex()
+	{
+		await _conversationService.ReIndex();
+		return NoContent();
+	}
+
+
 	[HttpGet("{id}")]
 	[SwaggerResponse(HttpStatusCode.OK, typeof(Conversation))]
 	public async Task<IActionResult> GetById(Guid id)

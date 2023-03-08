@@ -19,6 +19,8 @@ public class ConversationSearch : BaseSearchEngine, IConversationSearch
 	public ConversationSearch(IConfiguration configuration, ILogger<ConversationSearch> logger) : base(configuration)
 	{
 		_logger = logger;
+
+		CreateIndex().GetAwaiter().GetResult();
 	}
 
 	public async Task<List<Guid>> Search(string content)
@@ -30,9 +32,9 @@ public class ConversationSearch : BaseSearchEngine, IConversationSearch
 		d.Search<ConversationIndex>(s => s
 			.Index(conversationIndex)
 			.Query(q => q
-				.Term(m => m
+				.Match(m => m
 					.Field(conv => conv.Title)
-					.Value(content)
+					.Query(content).Fuzziness(Fuzziness.Auto)
 				)
 			)
 		);
@@ -43,13 +45,9 @@ public class ConversationSearch : BaseSearchEngine, IConversationSearch
 				.Nested(n => n
 					.Path(conv => conv.Members)
 					.Query(nq => nq
-						.Bool(b => b
-							.Must(must => must
-								.Term(match => match
-									.Field(conv => conv.Members.First().Name)
-									.Value(content)
-								)
-							)
+						.Match(match => match
+							.Field(conv => conv.Members.First().Name)
+							.Query(content)
 						)
 					)
 				)
@@ -68,13 +66,14 @@ public class ConversationSearch : BaseSearchEngine, IConversationSearch
 
 		var responses = await _client.MultiSearchAsync(d);
 
-		var conversations = responses.GetResponse<ConversationIndex>(conversationIndex);
-		var messages = responses.GetResponse<MessageIndex>(messagesIndex);
+
+		var conversations = responses.GetResponses<ConversationIndex>();
+		var messages = responses.GetResponses<MessageIndex>();
 
 		var ids = new List<Guid>();
 
-		ids.AddRange(conversations.Hits.Select(conv => conv.Source.Id));
-		ids.AddRange(messages.Hits.Select(message => message.Source.IdConversation));
+		ids.AddRange(conversations.SelectMany(x => x.Hits.Select(conv => conv.Source.Id)));
+		ids.AddRange(messages.SelectMany(x => x.Hits.Select(conv => conv.Source.IdConversation)));
 
 		logger.Exit(Log.F(ids.Count));
 
@@ -92,7 +91,7 @@ public class ConversationSearch : BaseSearchEngine, IConversationSearch
 			Title = title
 		};
 
-		await _client.IndexAsync(index, i => i.Index("conversations"));
+		await _client.IndexAsync(index, i => i.Index(conversationIndex));
 
 		logger.Exit();
 	}
@@ -166,5 +165,43 @@ public class ConversationSearch : BaseSearchEngine, IConversationSearch
 
 
 		logger.Exit();
+	}
+
+	public async Task ReIndex(List<Conversation> conversations)
+	{
+		await _client.Indices.DeleteAsync(conversationIndex);
+		await _client.Indices.DeleteAsync(messagesIndex);
+
+		await CreateIndex();
+
+		await _client.IndexManyAsync(conversations.Select(conv => new ConversationIndex
+		{
+			Id = conv.Id,
+			Members = conv.Members,
+			Title = conv.Title
+		}), conversationIndex);
+
+
+		await _client.IndexManyAsync(conversations.SelectMany(conv => conv.Messages.Select(msg => new MessageIndex
+		{
+			Author = msg.Author,
+			Content = msg.Content,
+			IdConversation = conv.Id
+		})), messagesIndex);
+	}
+
+	private async Task CreateIndex()
+	{
+		await CreateIndexIfMissing<MessageIndex>(messagesIndex);
+		await _client.Indices.CreateAsync(conversationIndex, c => c
+			.Map<ConversationIndex>(m => m
+				.AutoMap()
+				.Properties(ps => ps
+					.Nested<User>(n => n
+						.Name(p => p.Members)
+					)
+				)
+			)
+		);
 	}
 }

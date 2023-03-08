@@ -79,5 +79,15 @@ public static class Log
 			sb.Append($" ({(DateTime.Now - _startedAt).Milliseconds}ms)");
 			_logger.Log(_level, sb.ToString());
 		}
+
+		public void Info(string s)
+		{
+			if (!_logger.IsEnabled(LogLevel.Information)) return;
+
+			var sb = new StringBuilder($"Logging method {_method}");
+			if (_arguments?.Length > 0) sb.Append($": {_arguments}");
+			sb.Append($" {s}");
+			_logger.Log(_level, sb.ToString());
+		}
 	}
 }

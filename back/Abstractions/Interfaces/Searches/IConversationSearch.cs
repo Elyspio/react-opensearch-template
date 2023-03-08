@@ -13,4 +13,13 @@ public interface IConversationSearch
 	public Task AddMessage(Guid id, Message message);
 
 	public Task Delete(Guid id);
+
+
+	/// <summary>
+	///     ReIndex all conversations
+	///     Drops all indexes
+	/// </summary>
+	/// <param name="conversations"></param>
+	/// <returns></returns>
+	public Task ReIndex(List<Conversation> conversations);
 }
